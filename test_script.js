@@ -18,8 +18,8 @@ const terms = [`%${queryTerm}%`];
 function outputRows(rows, name) {
     console.log('Found', rows.length, 'person(s) by the name', name);
     for (const item of rows) {
-      console.log(item.id + ':', item.first_name, item.last_name + ', born', item.birthdate);
-        // CONVERT (varchar(10), getdate(), 103) AS [DD/MM/YYYY]
+      var date = item.birthdate;
+      console.log(item.id + ':', item.first_name, item.last_name + ', born',  date.toString().slice(4,16));
     }
 }
 
