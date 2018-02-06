@@ -11,21 +11,32 @@ const client = new pg.Client({
 });
 
 
-var args = process.argv;
-var query = args[2];
+const args = process.argv;
+const queryTerm = args[2];
+const terms = [`%${queryTerm}%`];
+
+function outputRows(rows, name) {
+    console.log('Found', rows.length, 'person(s) by the name', name);
+    for (const item of rows) {
+      console.log(item.id + ':', item.first_name, item.last_name + ', born', item.birthdate);
+        // CONVERT (varchar(10), getdate(), 103) AS [DD/MM/YYYY]
+    }
+}
 
 client.connect((err) => {
   if (err) {
     return console.error("Connection Error", err);
   }
-  client.query(`SELECT * FROM famous_people WHERE first_name LIKE '%${query}%' OR last_name LIKE '%${query}%'`, (err, result) => {
+  client.query(`SELECT * FROM famous_people WHERE first_name LIKE $1::text OR last_name LIKE $1::text`,terms, (err, result) => {
     if (err) {
       return console.error("error running query", err);
     }
-    console.log(result.rows); //output: 1
+    console.log("Searching...")
+    outputRows(result.rows, queryTerm);
     client.end();
   });
 });
+
 
 
 
